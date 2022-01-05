@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Alura.LeilaoOnline.WebApp.Models;
 using Alura.LeilaoOnline.WebApp.Dados;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Alura.LeilaoOnline.WebApp.Controllers
 {
@@ -16,18 +18,49 @@ namespace Alura.LeilaoOnline.WebApp.Controllers
             _context = new AppDbContext();
         }
 
+        private IEnumerable<Categoria> BuscarCategorias()
+        {
+            return _context.Categorias.ToList();
+        }
+
+        private IEnumerable<Leilao> BuscarLeiloes()
+        {
+            return _context.Leiloes.Include(l => l.Categoria).ToList();
+        }
+
+        private Leilao BuscaPorId(int id)
+        {
+            return _context.Leiloes.First(l => l.Id == id);
+        }
+
+        private void Incluir(Leilao leilao)
+        {
+            _context.Leiloes.Update(leilao);
+            _context.SaveChanges();
+        }
+
+        private void Alterar(Leilao leilao)
+        {
+            _context.Leiloes.Update(leilao);
+            _context.SaveChanges();
+        }
+
+        private void Excluir(Leilao leilao)
+        {
+            _context.Leiloes.Remove(leilao);
+            _context.SaveChanges();
+        }
         [HttpGet]
         public IActionResult EndpointGetLeiloes()
         {
-            var leiloes = _context.Leiloes
-                .Include(l => l.Categoria);
+            var leiloes = BuscarLeiloes();
             return Ok(leiloes);
         }
 
         [HttpGet("{id}")]
         public IActionResult EndpointGetLeilaoById(int id)
         {
-            var leilao = _context.Leiloes.Find(id);
+            var leilao = BuscaPorId(id);
             if (leilao == null)
             {
                 return NotFound();
@@ -38,29 +71,26 @@ namespace Alura.LeilaoOnline.WebApp.Controllers
         [HttpPost]
         public IActionResult EndpointPostLeilao(Leilao leilao)
         {
-            _context.Leiloes.Add(leilao);
-            _context.SaveChanges();
+            Incluir(leilao);
             return Ok(leilao);
         }
 
         [HttpPut]
         public IActionResult EndpointPutLeilao(Leilao leilao)
         {
-            _context.Leiloes.Update(leilao);
-            _context.SaveChanges();
+            Alterar(leilao);
             return Ok(leilao);
         }
 
         [HttpDelete("{id}")]
         public IActionResult EndpointDeleteLeilao(int id)
         {
-            var leilao = _context.Leiloes.Find(id);
+            var leilao = BuscaPorId(id);
             if (leilao == null)
             {
                 return NotFound();
             }
-            _context.Leiloes.Remove(leilao);
-            _context.SaveChanges();
+            Excluir(leilao);
             return NoContent();
         }
 
