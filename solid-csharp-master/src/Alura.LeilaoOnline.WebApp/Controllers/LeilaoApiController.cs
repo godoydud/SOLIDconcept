@@ -19,14 +19,14 @@ namespace Alura.LeilaoOnline.WebApp.Controllers
         [HttpGet]
         public IActionResult EndpointGetLeiloes()
         {
-            var leiloes = _dao.BuscarTodosLeiloes();
+            var leiloes = _dao.BuscarLeiloes();
             return Ok(leiloes);
         }
 
         [HttpGet("{id}")]
         public IActionResult EndpointGetLeilaoById(int id)
         {
-            var leilao = _dao.BuscarLeilaoPorId(id);
+            var leilao = _dao.BuscaPorId(id);
             if (leilao == null)
             {
                 return NotFound();
@@ -37,26 +37,26 @@ namespace Alura.LeilaoOnline.WebApp.Controllers
         [HttpPost]
         public IActionResult EndpointPostLeilao(Leilao leilao)
         {
-            _dao.IncluirLeilao(leilao);
+            _dao.Incluir(leilao);
             return Ok(leilao);
         }
 
         [HttpPut]
         public IActionResult EndpointPutLeilao(Leilao leilao)
         {
-            _dao.AlterarLeilao(leilao);
+            _dao.Alterar(leilao);
             return Ok(leilao);
         }
 
         [HttpDelete("{id}")]
         public IActionResult EndpointDeleteLeilao(int id)
         {
-            var leilao = _dao.BuscarLeilaoPorId(id);
+            var leilao = _dao.BuscaPorId(id);
             if (leilao == null)
             {
                 return NotFound();
             }
-            _dao.ExcluirLeilao(leilao);
+            _dao.Excluir(leilao);
             return NoContent();
         }
 
